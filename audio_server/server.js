@@ -1,10 +1,18 @@
 import express from 'express';
 import { AudioFileManager } from './service';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+
+let corsOptions = {
+    origin: 'http://localhost:3001',
+    credentials: true
+}
+
+app.use(cors());
 
 app.get("/", (request, response) => {
     response.send('<h1>Audio Server</h1>');
