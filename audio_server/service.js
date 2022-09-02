@@ -41,7 +41,7 @@ export class AudioFileManager {
                         .then(result => {
                             result.forEach(item => {
                                 const trackId = uuidv4();
-                                item._trackId = trackId;
+                                item.trackId = trackId;
         
                                 this._trackList.push(item);
                                 this._trackImgMap[trackId] = getImage(item.common.picture);
