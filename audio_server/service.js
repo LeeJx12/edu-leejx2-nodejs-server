@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
-import { parseFile } from 'music-metadata';
+import { parseFile, selectCover } from 'music-metadata';
+import { btoa } from 'buffer';
 
 dotenv.config();
 
@@ -44,7 +45,7 @@ export class AudioFileManager {
                                 item.trackId = trackId;
         
                                 this._trackList.push(item);
-                                this._trackImgMap[trackId] = getImage(item.common.picture);
+                                this._trackImgMap[trackId] = selectCover(item.common.picture);
                             })
                         })
                         .then(() => {
@@ -72,21 +73,22 @@ export class AudioFileManager {
         })
     }
 
-    getPicture(query) {
-        const { trackId } = query;
-    
+    getPicture(trackId) {
         return this._trackImgMap[trackId];
     }
 }
 
 function getImage(image) {
     if (image?.data) {
-        var base64String = "";
-        for (var i = 0; i < image.data.length; i++) {
-            base64String += String.fromCharCode(image.data[i]);
-        }
-        var base64 = "data:" + image.format + ";base64," + window.btoa(base64String);
-        return base64;
+        return `data:${image.format};base64,${image.data.toString('base64')}`;
+    }
+
+    return undefined;
+}
+
+export function getFormat(src) {
+    if (src && src !== '') {
+        return src.split(';base64,')[0].replace('data:', '');
     }
 
     return undefined;

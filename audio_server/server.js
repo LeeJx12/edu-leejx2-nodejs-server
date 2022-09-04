@@ -1,5 +1,5 @@
 import express from 'express';
-import { AudioFileManager } from './service';
+import { AudioFileManager, getFormat } from './service';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
@@ -18,8 +18,19 @@ app.get("/", (request, response) => {
     response.send('<h1>Audio Server</h1>');
 });
 
-app.get("/list", (request, response) => {
+app.get("/audio", (request, response) => {
     response.json(AudioFileManager.getInstance().getTrackList());
+});
+
+app.get("/audio/pic/:trackId", (request, response) => {
+    let data = AudioFileManager.getInstance().getPicture(request.params.trackId);
+    const img = Buffer.from(data.data, 'base64');
+
+    response.writeHead(200, {
+        'Content-Type': data.format,
+        'Content-Length': img.length
+    })
+    response.end(img);
 });
 
 (function() {
