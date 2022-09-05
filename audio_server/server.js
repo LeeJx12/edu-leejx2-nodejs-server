@@ -48,6 +48,7 @@ app.get("/audio/:trackId", (request, response) => {
 
     const stream = fs.createReadStream(filePath, { start, end });
     stream.pipe(response);
+    stream.on('end', stream.close)
 });
 
 app.get("/audio/pic/:trackId", (request, response) => {
@@ -55,7 +56,7 @@ app.get("/audio/pic/:trackId", (request, response) => {
     const img = Buffer.from(data.data, 'base64');
 
     response.writeHead(200, {
-        'Content-Type': data.format,
+        'Content-Type': `image/${data.format}`,
         'Content-Length': img.length
     })
     response.end(img);
