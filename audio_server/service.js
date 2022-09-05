@@ -39,9 +39,10 @@ export class AudioFileManager {
         
                     Promise.all(promiseList)
                         .then(result => {
-                            result.forEach(item => {
+                            result.forEach((item, idx) => {
                                 const trackId = uuidv4();
                                 item.trackId = trackId;
+                                item.filePath = `${audioPath}/${fileList[idx]}`;
         
                                 this._trackList.push(item);
                                 this._trackImgMap[trackId] = selectCover(item.common.picture);
@@ -72,6 +73,10 @@ export class AudioFileManager {
                 _duration: item.format.duration
             }
         })
+    }
+
+    getTrack(trackId) {
+        return this._trackList.find(track => track.trackId === trackId);
     }
 
     getPicture(trackId) {
