@@ -13,7 +13,6 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "music-metadata": "^8.0.1",
-    "musicmetadata": "^2.0.5",
     "uuid": "^8.3.2"
   }
 }

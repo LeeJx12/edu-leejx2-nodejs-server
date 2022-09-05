@@ -2,8 +2,6 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import { parseFile, selectCover } from 'music-metadata';
-import pkg from 'musicmetadata';
-const mm = pkg;
 
 dotenv.config();
 
@@ -34,23 +32,11 @@ export class AudioFileManager {
                 if (error) {
                     reject(error);
                 } else {
-                    // const promiseList = [];
-                    // fileList.forEach(file => {
-                    //     promiseList.push(parseFile(`${audioPath}/${file}`))
-                    // })
-
-                    const promiseList = fileList.forEach(file => {
-                        return new Promise((inresolve, inreject) => {
-                            mm(fs.createReadStream(`${audioPath}/${file}`), (err, data) => {
-                                if (err) {
-                                    console.error(err);
-                                    inreject(err)
-                                }
-                                else inresolve(data);
-                            })
-                        })
+                    const promiseList = [];
+                    fileList.forEach(file => {
+                        promiseList.push(parseFile(`${audioPath}/${file}`))
                     })
-        
+
                     Promise.all(promiseList)
                         .then(result => {
                             result.forEach((item, idx) => {
@@ -59,7 +45,7 @@ export class AudioFileManager {
                                 item.filePath = `${audioPath}/${fileList[idx]}`;
         
                                 this._trackList.push(item);
-                                this._trackImgMap[trackId] = item.picture;//selectCover(item.common.picture);
+                                this._trackImgMap[trackId] = selectCover(item.common.picture);
                             })
 
                             return result.length;
@@ -76,25 +62,15 @@ export class AudioFileManager {
 
     getTrackList() {
         return this._trackList.map(item => {
-            // return {
-            //     _trackId: item.trackId,
-            //     _album: item.common.album.toString('utf8'),
-            //     _genre: item.common.genre,
-            //     _title: item.common.title.toString('utf8'),
-            //     _artist: item.common.artist.toString('utf8'),
-            //     _artists: item.common.artists,
-            //     _year: item.common.year,
-            //     _duration: item.format.duration
-            // }
             return {
                 _trackId: item.trackId,
-                _album: item.album.toString('utf8'),
-                _genre: item.genre,
-                _title: item.title.toString('utf8'),
-                _artist: item.artist[0],
-                _artists: item.artists,
-                _year: item.year,
-                _duration: item.duration
+                _album: item.common.album.toString('utf8'),
+                _genre: item.common.genre,
+                _title: item.common.title.toString('utf8'),
+                _artist: item.common.artist.toString('utf8'),
+                _artists: item.common.artists,
+                _year: item.common.year,
+                _duration: item.format.duration
             }
         })
     }
