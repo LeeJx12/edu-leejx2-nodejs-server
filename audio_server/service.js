@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
 import { parseFile, selectCover } from 'music-metadata';
-import { btoa } from 'buffer';
 
 dotenv.config();
 
@@ -47,9 +46,11 @@ export class AudioFileManager {
                                 this._trackList.push(item);
                                 this._trackImgMap[trackId] = selectCover(item.common.picture);
                             })
+
+                            return result.length;
                         })
-                        .then(() => {
-                            console.log('Audio Initialized')
+                        .then(cnt => {
+                            console.log('Audio Initialized >> ' + cnt)
                         })
                         .then(resolve)
                         .catch(reject);
@@ -76,14 +77,6 @@ export class AudioFileManager {
     getPicture(trackId) {
         return this._trackImgMap[trackId];
     }
-}
-
-function getImage(image) {
-    if (image?.data) {
-        return `data:${image.format};base64,${image.data.toString('base64')}`;
-    }
-
-    return undefined;
 }
 
 export function getFormat(src) {
